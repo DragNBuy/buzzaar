@@ -54,9 +54,6 @@ INSTALLED_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
-    # better form rendering (might not be neccessary, cause we are using Angular)
-    "crispy_forms",
-    "formtools",
     # debugging during dev
     "debug_toolbar",
     # hijack user in admin panel (very useful for testing)
