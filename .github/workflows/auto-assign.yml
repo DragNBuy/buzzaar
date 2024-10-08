@@ -1,4 +1,4 @@
-name: Auto Assign
+name: Auto Assign Issues
 on:
   issues:
     types: [opened]
@@ -15,5 +15,5 @@ jobs:
       uses: pozil/auto-assign-issue@v1
       with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          assignees: codelotusr
+          assignees: codelotusr, aCloud1, erikas9987, justingal
           numOfAssignee: 1
