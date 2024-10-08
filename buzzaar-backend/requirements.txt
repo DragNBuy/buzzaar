@@ -24,6 +24,8 @@ channels
 # consider these maybe?
 # pytest-django # would let us use pytest with django
 # factory_boy # easily generate test data, might be very useful to speed dev process
+# Jina2 # learnt skills would translate to projects outside of Django, for example flask projects, also more flexible, but more control isn't always better, just DTL might be
+# enough for this project
 
 
 
