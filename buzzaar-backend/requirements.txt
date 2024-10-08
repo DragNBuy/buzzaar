@@ -1,0 +1,29 @@
+Django
+django-rest-framework
+djangorestframework-simplejwt
+django-cors-headers
+django-filter
+django-allauth
+django-axes
+django-crispy-forms
+django-debug-toolbar
+django-environ
+django-formtools
+django-hijack
+django-oauth-toolkit
+django-stubs
+djhtml
+djlint
+isort
+psycopg2
+PyJWT
+stripe
+django-stripe-payments
+django-storages
+channels
+# consider these maybe?
+# pytest-django # would let us use pytest with django
+# factory_boy # easily generate test data, might be very useful to speed dev process
+
+
+
