@@ -44,11 +44,30 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # Rest framework and other stuff
+    "rest_framework",
+    "axes",
+    "corsheaders",
+    "django_filters"
     # need to add all our apps + installed module apps
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
+    # better form rendering (might not be neccessary, cause we are using Angular)
+    "crispy_forms",
+    "formtools",
+    # debugging during dev
+    "debug_toolbar",
+    # hijack user in admin panel (very useful for testing)
+    "hijack",
+    # if we decide to use cloud storage (not that hard to set up Amazon S3 or google and good experience)
+    "storages",
+    # payment integration
+    "django_stripe_payments",
+    # websockets, for real time messaging
+    "channels",
+    # our apps
     "users",
     "products",
     "billing",
