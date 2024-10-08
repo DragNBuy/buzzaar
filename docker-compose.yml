@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - RUNNING_IN_DOCKER=True
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./buzzaar-frontend  # Specify the Angular frontend folder
+    container_name: frontend
+    volumes:
+      - ./buzzaar-frontend:/app
+    ports:
+      - "4200:80"  # Adjust the ports if necessary (Angular frontend)
+    command: npm start  # Or use npm run build if you want to serve a static build
+    environment:
+      - NODE_ENV=development
+
+  db:
+    image: postgres:13
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+
