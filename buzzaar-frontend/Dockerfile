@@ -8,9 +8,7 @@ COPY buzzaar-client/package*.json ./
 
 RUN rm -rf node_modules package-lock.json
 
-RUN npm install --legacy-peer-deps --omit=optional
-
-RUN npm install -g @angular/cli
+RUN npm install --omit=optional
 
 COPY buzzaar-client/ .
 
