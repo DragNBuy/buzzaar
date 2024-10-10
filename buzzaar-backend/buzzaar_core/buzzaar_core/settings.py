@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "axes",
     "corsheaders",
-    "django_filters"
+    "django_filters",
     # need to add all our apps + installed module apps
     "allauth",
     "allauth.account",
@@ -60,8 +60,6 @@ INSTALLED_APPS = [
     "hijack",
     # if we decide to use cloud storage (not that hard to set up Amazon S3 or google and good experience)
     "storages",
-    # payment integration
-    "django_stripe_payments",
     # websockets, for real time messaging
     "channels",
     # our apps

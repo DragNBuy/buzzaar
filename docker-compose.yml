@@ -1,11 +1,11 @@
-version: '3'
-
 services:
-  web:
-    build: .
+  backend:
+    build:
+      context: ./buzzaar-backend/
+      dockerfile: Dockerfile
     command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     volumes:
-      - .:/app
+      - ./buzzaar-backend/buzzaar_core:/app
     ports:
       - "8000:8000"
     env_file:
@@ -18,13 +18,14 @@ services:
 
   frontend:
     build:
-      context: ./buzzaar-frontend  # Specify the Angular frontend folder
+      context: ./buzzaar-frontend/
+      dockerfile: Dockerfile
     container_name: frontend
     volumes:
-      - ./buzzaar-frontend:/app
+      - ./buzzaar-frontend/buzzaar-client:/app
     ports:
-      - "4200:80"  # Adjust the ports if necessary (Angular frontend)
-    command: npm start  # Or use npm run build if you want to serve a static build
+      - "4200:4200" 
+    command: npm start
     environment:
       - NODE_ENV=development
 
