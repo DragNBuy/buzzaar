@@ -4,13 +4,13 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y python3 make g++
 
-RUN npm install -g @angular/cli
-
 COPY buzzaar-client/package*.json ./
 
 RUN rm -rf node_modules package-lock.json
 
-RUN npm install --omit=optional
+RUN npm install --legacy-peer-deps --omit=optional
+
+RUN npm install -g @angular/cli
 
 COPY buzzaar-client/ .
 
