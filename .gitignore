@@ -68,38 +68,5 @@ celerybeat-schedule.*
 .idea/**/dictionaries
 .idea/**/shelf
 
-# Angular #
-node_modules/
-dist/
-tmp/
-out-tsc/
-*.tsbuildinfo
-.angular/cache/
-.angular/**/!(README.md)
-
-# Compiled JavaScript #
-*.js
-*.js.map
-
-# Compiled CSS #
-*.css
-*.css.map
-
-# Temporary files #
-/*.log
-/*.lock
-.yarn-integrity
-.pnpm-debug.log
-
-# Angular CLI #
-.angular-cli.json
-.angular.json
-
-# Environment files #
-src/environments/*.ts
-
-# Angular test coverage #
-coverage/
-
 # IDE files #
 .vscode/
