@@ -1,0 +1,95 @@
+# Should probably split the backend and frontend into two workflows, but too lazy
+
+name: FullStack test cases
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_DB: testdb
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        options: >-
+          --health-cmd="pg_isready -h localhost -U test_user -d test_db"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+        ports:
+          - 5432:5432
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.12
+
+    - name: Install Django dependencies
+      working-directory: ./buzzaar-backend
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Set environment variables
+      run: |
+        echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> $GITHUB_ENV
+        echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> $GITHUB_ENV
+        echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> $GITHUB_ENV
+        echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
+        echo "ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}" >> $GITHUB_ENV
+        echo "DATABASE_HOST=localhost" >> $GITHUB_ENV
+        echo "DATABASE_PORT=5432" >> $GITHUB_ENV
+        echo "DEBUG=${{ secrets.DEBUG }}" >> $GITHUB_ENV
+        echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> $GITHUB_ENV
+        echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> $GITHUB_ENV
+
+    - name: Wait for PostgreSQL
+      run: |
+        until pg_isready -h localhost -p 5432 -U test_user -d test_db; do
+          echo "Waiting for PostgreSQL..."
+          sleep 5
+        done
+
+    - name: Run migrations
+      working-directory: ./buzzaar-backend
+      run: |
+        source venv/bin/activate
+        python manage.py migrate
+
+    - name: Run Django tests
+      working-directory: ./buzzaar-backend
+      run: |
+        source venv/bin/activate
+        python manage.py test
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
+    - name: Install Angular dependencies
+      working-directory: ./buzzaar-frontend
+      run: |
+        npm install
+        npm run build --if-present
+
+    - name: Run Angular tests
+      working-directory: ./buzzaar-frontend
+      run: |
+        npm test
+
