@@ -1,0 +1,36 @@
+name: Frontend Test Cases
+on:
+  push:
+    paths:
+      - 'buzzaar-frontend/**'
+    branches:
+      - main
+  pull_request:
+    paths:
+      - 'buzzaar-frontend/**'
+    branches:
+      - main
+
+jobs:
+  frontend-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
+    - name: Install Angular dependencies
+      working-directory: ./buzzaar-frontend
+      run: |
+        npm install
+        npm run build --if-present
+
+    - name: Run Angular tests
+      working-directory: ./buzzaar-frontend
+      run: |
+        npm test
