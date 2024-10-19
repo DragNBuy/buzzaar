@@ -1,23 +1,25 @@
-# Should probably split the backend and frontend into two workflows, but too lazy
-
-name: FullStack test cases
+name: Backend Test Cases
 on:
   push:
+    paths:
+      - 'buzzaar-backend/**'
     branches:
       - main
   pull_request:
+    paths:
+      - 'buzzaar-backend/**'
     branches:
       - main
 
 jobs:
-  test:
+  backend-test:
     runs-on: ubuntu-latest
 
     services:
       postgres:
         image: postgres:13
         env:
-          POSTGRES_DB: testdb
+          POSTGRES_DB: test_db
           POSTGRES_USER: test_user
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         options: >-
@@ -55,8 +57,6 @@ jobs:
         echo "DATABASE_HOST=localhost" >> $GITHUB_ENV
         echo "DATABASE_PORT=5432" >> $GITHUB_ENV
         echo "DEBUG=${{ secrets.DEBUG }}" >> $GITHUB_ENV
-        echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> $GITHUB_ENV
-        echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> $GITHUB_ENV
 
     - name: Wait for PostgreSQL
       run: |
@@ -76,20 +76,4 @@ jobs:
       run: |
         source venv/bin/activate
         python manage.py test
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '20'
-
-    - name: Install Angular dependencies
-      working-directory: ./buzzaar-frontend
-      run: |
-        npm install
-        npm run build --if-present
-
-    - name: Run Angular tests
-      working-directory: ./buzzaar-frontend
-      run: |
-        npm test
 
