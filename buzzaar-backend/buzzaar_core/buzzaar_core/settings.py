@@ -44,16 +44,17 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
     # Rest framework and other stuff
     "rest_framework",
+    "rest_framework.authtoken",
     "axes",
     "corsheaders",
     "django_filters",
-    # need to add all our apps + installed module apps
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "allauth.socialaccount.providers.google",
+    "dj_rest_auth",
     # debugging during dev
     "debug_toolbar",
     # hijack user in admin panel (very useful for testing)
@@ -76,6 +77,7 @@ SITE_ID = 1
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
+    "axes.backends.AxesStandaloneBackend",
 )
 
 LOGIN_REDIRECT_URL = "home"
@@ -90,7 +92,37 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "axes.middleware.AxesMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
+
+CORS_ALLOWED_ORIGINS = ["http://localhost:4200"]
+
+CORS_ALLOW_CREDENTIALS = True
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+}
+
+DJANGO_REST_AUTH = {
+    "USE_JWT": True,
+    "JWT_AUTH_COOKIE": "buzzaar_access_token",
+    "JWT_AUTH_REFRESH_COOKIE": "buzaar_refresh_token",
+}
+
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_EMAIL_REQUIRED = True
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+DEFAULT_FROM_EMAIL = "webmaster@localhost"
 
 ROOT_URLCONF = "buzzaar_core.urls"
 
