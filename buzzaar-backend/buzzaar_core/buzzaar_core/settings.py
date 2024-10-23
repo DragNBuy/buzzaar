@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import os
+from datetime import timedelta
 from pathlib import Path
 
 import environ
@@ -77,7 +78,7 @@ SITE_ID = 1
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
-    "axes.backends.AxesStandaloneBackend",
+    "axes.backends.AxesModelBackend",
 )
 
 LOGIN_REDIRECT_URL = "home"
@@ -91,7 +92,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "allauth.account.middleware.AccountMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "axes.middleware.AxesMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
@@ -114,6 +114,13 @@ DJANGO_REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_COOKIE": "buzzaar_access_token",
     "JWT_AUTH_REFRESH_COOKIE": "buzaar_refresh_token",
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=3),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
 }
 
 ACCOUNT_EMAIL_VERIFICATION = "none"
