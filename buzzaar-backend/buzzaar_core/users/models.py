@@ -3,11 +3,12 @@ from django.db import models
 
 
 class CustomUser(AbstractUser):
-    username = None
     email = models.EmailField(unique=True)
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    date_of_birth = models.DateField(null=True, blank=True)
+    city = models.CharField(max_length=100, blank=True)
+    phone = models.CharField(max_length=50, blank=True)
+    profile_picture = models.ImageField(
+        upload_to="profile_pictures/", blank=True, null=True
+    )
 
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
+    def __str__(self) -> str:
+        return self.username
