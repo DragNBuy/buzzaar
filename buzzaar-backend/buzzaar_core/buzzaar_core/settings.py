@@ -15,6 +15,7 @@ from datetime import timedelta
 from pathlib import Path
 
 import environ
+from environ import NoValue
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -33,7 +34,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])  # type: ignore
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS") or []
 
 
 # Application definition
@@ -162,7 +163,7 @@ DATABASES = {
         "USER": env("POSTGRES_USER"),
         "PASSWORD": env("POSTGRES_PASSWORD"),
         "HOST": ("db" if RUNNING_IN_DOCKER else "localhost"),
-        "PORT": env("DATABASE_PORT", default=5432),  # type: ignore
+        "PORT": env("DATABASE_PORT") or "5432",
     }
 }
 

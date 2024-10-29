@@ -1,5 +1,7 @@
 # Environments
 .env
+.venv
+.envrc
 venv
 pyrightconfig.json
 
