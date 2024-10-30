@@ -2,6 +2,7 @@
 .env
 .venv
 .envrc
+.direnv
 venv
 pyrightconfig.json
 
