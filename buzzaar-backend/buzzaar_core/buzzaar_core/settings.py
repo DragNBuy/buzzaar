@@ -10,6 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import django_stubs_ext
+
+django_stubs_ext.monkeypatch()
+
 import os
 from datetime import timedelta
 from pathlib import Path
@@ -111,6 +115,7 @@ REST_FRAMEWORK = {
 }
 
 REST_AUTH = {
+    "LOGIN_SERIALIZER": "users.serializers.CustomLoginSerializer",
     "USE_JWT": True,
     "JWT_AUTH_COOKIE": "buzzaar_access_token",
     "JWT_AUTH_REFRESH_COOKIE": "buzaar_refresh_token",

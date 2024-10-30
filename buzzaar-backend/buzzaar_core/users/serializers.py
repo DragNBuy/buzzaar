@@ -1,4 +1,5 @@
 from dj_rest_auth.registration.serializers import RegisterSerializer
+from dj_rest_auth.serializers import LoginSerializer
 from rest_framework import serializers
 
 from .models import CustomUser
@@ -16,7 +17,6 @@ class CustomRegisterSerializer(RegisterSerializer):
     phone = serializers.CharField(required=False)
 
     def get_cleaned_data(self):
-        print("CustomRegisterSerializer is being used")
         data = super().get_cleaned_data()
         if isinstance(self.initial_data, dict):
             data["email"] = self.initial_data.get("email", "")
@@ -32,3 +32,11 @@ class CustomRegisterSerializer(RegisterSerializer):
             user.phone = self.validated_data.get("phone", "")
             user.save(update_fields=["email", "city", "phone"])
         return user
+
+
+class CustomLoginSerializer(LoginSerializer):
+    username = None
+    email = serializers.EmailField(required=True)
+    password = serializers.CharField(
+        style={"input_type": "password"}, trim_whitespace=False
+    )
