@@ -15,7 +15,6 @@ from datetime import timedelta
 from pathlib import Path
 
 import environ
-from environ import NoValue
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -50,7 +49,6 @@ INSTALLED_APPS = [
     # Rest framework and other stuff
     "rest_framework",
     "rest_framework.authtoken",
-    "axes",
     "corsheaders",
     "django_filters",
     "allauth",
@@ -79,8 +77,9 @@ SITE_ID = 1
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
-    "axes.backends.AxesModelBackend",
 )
+
+AUTH_USER_MODEL = "users.CustomUser"
 
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "/accounts/login"
@@ -93,8 +92,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "corsheaders.middleware.CorsMiddleware",
-    "axes.middleware.AxesMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
@@ -111,10 +110,12 @@ REST_FRAMEWORK = {
     ],
 }
 
-DJANGO_REST_AUTH = {
+REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_COOKIE": "buzzaar_access_token",
     "JWT_AUTH_REFRESH_COOKIE": "buzaar_refresh_token",
+    "REGISTER_SERIALIZER": "users.serializers.CustomRegisterSerializer",
+    "REGISTER_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
 }
 
 SIMPLE_JWT = {
