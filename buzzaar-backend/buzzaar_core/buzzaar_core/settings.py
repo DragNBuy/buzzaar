@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     "dj_rest_auth",
     # debugging during dev
     "debug_toolbar",
+    "django_extensions",
     # hijack user in admin panel (very useful for testing)
     "hijack",
     # if we decide to use cloud storage (not that hard to set up Amazon S3 or google and good experience)
@@ -90,6 +91,7 @@ LOGOUT_REDIRECT_URL = "/accounts/login"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -97,9 +99,9 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
+
 
 CORS_ALLOWED_ORIGINS = ["http://localhost:4200"]
 
@@ -117,10 +119,17 @@ REST_FRAMEWORK = {
 REST_AUTH = {
     "LOGIN_SERIALIZER": "users.serializers.CustomLoginSerializer",
     "USE_JWT": True,
-    "JWT_AUTH_COOKIE": "buzzaar_access_token",
-    "JWT_AUTH_REFRESH_COOKIE": "buzaar_refresh_token",
     "REGISTER_SERIALIZER": "users.serializers.CustomRegisterSerializer",
     "REGISTER_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
+    "JWT_AUTH_COOKIE": "buzzaar_access_token",
+    "JWT_AUTH_REFRESH_COOKIE": "buzzaar_refresh_token",
+    "JWT_AUTH_REFRESH_COOKIE_PATH": "/",
+    "JWT_AUTH_SECURE": False,
+    "JWT_AUTH_HTTPONLY": True,
+    "JWT_AUTH_SAMESITE": "Lax",
+    "JWT_AUTH_RETURN_EXPIRATION": False,
+    "JWT_AUTH_COOKIE_USE_CSRF": False,
+    "JWT_AUTH_COOKIE_ENFORCE_CSRF_ON_UNAUTHENTICATED": False,
 }
 
 SIMPLE_JWT = {

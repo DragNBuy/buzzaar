@@ -13,6 +13,7 @@ pyrightconfig.json
 __pycache__
 db.sqlite3
 media
+htmlcov
 
 # Python # 
 *.py[cod] 

@@ -10,6 +10,7 @@ on:
       - 'buzzaar-backend/**'
     branches:
       - main
+  workflow_dispatch: {}
 
 jobs:
   backend-test:
@@ -45,7 +46,6 @@ jobs:
         python -m venv venv
         ./venv/bin/pip install --upgrade pip
         ./venv/bin/pip install -r requirements.txt
-        # Ensure pytest and pytest-django are installed
         ./venv/bin/pip install pytest pytest-django
 
     - name: Set environment variables

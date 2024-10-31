@@ -26,6 +26,7 @@ class CustomRegisterSerializer(RegisterSerializer):
 
     def save(self, request):
         user = super().save(request)
+        self.user = user
         if isinstance(self.validated_data, dict):
             user.email = self.validated_data.get("email", "")
             user.city = self.validated_data.get("city", "")
