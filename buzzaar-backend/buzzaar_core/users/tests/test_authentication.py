@@ -27,6 +27,29 @@ def test_user_registration(api_client):
 
 @pytest.mark.authentication
 @pytest.mark.django_db
+def test_user_registration_with_empty_fields(api_client):
+    """
+    Test that a user cannot register with empty fields.
+    """
+    url = reverse("rest_register")
+    data = {
+        "email": "",
+        "username": "",
+        "password1": "",
+        "password2": "",
+        "city": "",
+        "phone": "",
+    }
+    response = api_client.post(url, data, format="json")
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.data["email"][0] == "This field may not be blank."
+    assert response.data["username"][0] == "This field may not be blank."
+    assert response.data["password1"][0] == "This field may not be blank."
+
+
+@pytest.mark.authentication
+@pytest.mark.django_db
 def test_user_login(api_client, user):
     """
     Test that a user can log in successfully.

@@ -5,6 +5,7 @@ on:
       - 'buzzaar-backend/**'
     branches:
       - main
+      - dev
   pull_request:
     paths:
       - 'buzzaar-backend/**'
