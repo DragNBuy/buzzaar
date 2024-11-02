@@ -69,12 +69,12 @@ jobs:
         done
 
     - name: Run migrations
-      working-directory: ./buzzaar-backend
+      working-directory: ./buzzaar-backend/buzzaar_core/
       run: |
-        ./buzzaar_core/venv/bin/poetry run python manage.py migrate
+        ./venv/bin/poetry run python manage.py migrate
 
     - name: Run pytest tests
-      working-directory: ./buzzaar-backend
+      working-directory: ./buzzaar-backend/buzzaar_core/
       run: |
-        ./buzzaar_core/venv/bin/poetry run pytest
+        ./venv/bin/poetry run pytest
 
