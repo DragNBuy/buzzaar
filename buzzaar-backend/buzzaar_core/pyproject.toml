@@ -75,6 +75,7 @@ typing-extensions = "4.12.2"
 uritemplate = "4.1.1"
 urllib3 = "2.2.3"
 psycopg2-binary = "^2.9.10"
+pytest-cov = "^6.0.0"
 
 [tool.poetry.group.dev.dependencies]
 django-debug-toolbar = "4.4.6"
