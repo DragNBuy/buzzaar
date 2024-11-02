@@ -3,7 +3,7 @@ services:
     build:
       context: ./buzzaar-backend/
       dockerfile: Dockerfile
-    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "poetry run python manage.py migrate && poetry run python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./buzzaar-backend/buzzaar_core:/app
       - /app/node_modules
@@ -13,6 +13,7 @@ services:
       - .env
     environment:
       - RUNNING_IN_DOCKER=True
+      - PATH=/root/.local/bin:$PATH
     depends_on:
       db:
         condition: service_healthy
