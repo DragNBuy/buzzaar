@@ -12,3 +12,10 @@ class CustomUser(AbstractUser):
 
     def __str__(self) -> str:
         return self.username
+
+
+class Address(models.Model):
+    city = models.CharField(max_length=100, blank=True)
+    street = models.CharField(max_length=100, blank=True)
+    house = models.CharField(max_length=20, blank=True)
+    postal_code = models.CharField(max_length=20, blank=True)
