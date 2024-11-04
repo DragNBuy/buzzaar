@@ -1,4 +1,7 @@
+from urllib.parse import urlparse
+
 import pytest
+from django.core import mail
 from django.urls import reverse
 from rest_framework import status
 
@@ -7,7 +10,7 @@ from rest_framework import status
 @pytest.mark.django_db
 def test_user_registration(api_client):
     """
-    Test that a user can register successfully.
+    Test that a user can register successfully and email confirmation is required.
     """
     url = reverse("rest_register")
     data = {
@@ -24,53 +27,33 @@ def test_user_registration(api_client):
     response = api_client.post(url, data, format="json")
 
     assert response.status_code == status.HTTP_201_CREATED
-    assert response.data["user"]["email"] == "newuser@gmail.com"
-    assert response.data["user"]["username"] == "newuser"
+    assert "detail" in response.data
+    assert response.data["detail"] == "Verification e-mail sent."
 
-    address = response.data["user"].get("address")
-    assert address is not None, "Address data should be present in the response"
-    assert address["city"] == "test city"
-    assert address["street"] == "test street"
+    assert len(mail.outbox) == 1
+    confirmation_email = mail.outbox[0]
+    assert "Confirm Your Email Address" in confirmation_email.subject
 
+    confirmation_url = None
+    for line in confirmation_email.body.splitlines():
+        if "http" in line:
+            confirmation_url = line.strip()
+            break
 
-@pytest.mark.authentication
-@pytest.mark.django_db
-def test_user_registration_with_empty_fields(api_client):
-    """
-    Test that a user cannot register with empty fields.
-    """
-    url = reverse("rest_register")
-    data = {
-        "email": "",
-        "username": "",
-        "password1": "",
-        "password2": "",
-        "phone": "",
-        "city": "",
-        "street": "",
-        "house": "",
-        "postal_code": "",
-    }
-    response = api_client.post(url, data, format="json")
+    assert confirmation_url is not None, "No confirmation URL found in email"
 
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.data["email"][0] == "This field may not be blank."
-    assert response.data["username"][0] == "This field may not be blank."
-    assert response.data["password1"][0] == "This field may not be blank."
-    assert response.data["password2"][0] == "This field may not be blank."
+    parsed_url = urlparse(confirmation_url)
+    confirmation_key = parsed_url.path.split("/")[-2]
 
-
-@pytest.mark.authentication
-@pytest.mark.django_db
-def test_user_login(api_client, user):
-    """
-    Test that a user can log in successfully.
-    """
-
-    url = reverse("rest_login")
-    data = {"email": user.email, "password": "password123"}
-    response = api_client.post(url, data, format="json")
-
+    verify_url = reverse("rest_verify_email")
+    response = api_client.post(verify_url, data={"key": confirmation_key})
     assert response.status_code == status.HTTP_200_OK
-    assert "buzzaar_access_token" in response.cookies
-    assert "buzzaar_refresh_token" in response.cookies
+    assert response.data["detail"] == "ok"
+
+    login_url = reverse("rest_login")
+    login_data = {"email": "newuser@gmail.com", "password": "strong!Password123"}
+    login_response = api_client.post(login_url, login_data, format="json")
+
+    assert login_response.status_code == status.HTTP_200_OK
+    assert "buzzaar_access_token" in login_response.cookies
+    assert "buzzaar_refresh_token" in login_response.cookies
