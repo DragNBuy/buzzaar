@@ -6,10 +6,11 @@ RUN apt-get update && apt-get install -y \
 	gcc \
 	libpq-dev \
 	build-essential \
+	pipx \
 	--no-install-recommends && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
-RUN pip install --upgrade pip && pip install -r requirements.txt
+COPY ./buzzaar_core/pyproject.toml .
+RUN pipx ensurepath && . ~/.bashrc && pipx install poetry && poetry lock --no-update && poetry install
 
 COPY . .
 

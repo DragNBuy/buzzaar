@@ -42,12 +42,13 @@ jobs:
         python-version: '3.12'
 
     - name: Install Django dependencies
-      working-directory: ./buzzaar-backend
+      working-directory: ./buzzaar-backend/buzzaar_core
       run: |
         python -m venv venv
-        ./venv/bin/pip install --upgrade pip
-        ./venv/bin/pip install -r requirements.txt
-        ./venv/bin/pip install pytest pytest-django
+        ./venv/bin/pip install --upgrade pip setuptools
+        ./venv/bin/pip install poetry
+        ./venv/bin/poetry lock --no-update
+        ./venv/bin/poetry install
 
     - name: Set environment variables
       run: |
@@ -68,12 +69,12 @@ jobs:
         done
 
     - name: Run migrations
-      working-directory: ./buzzaar-backend
+      working-directory: ./buzzaar-backend/buzzaar_core/
       run: |
-        ./venv/bin/python manage.py migrate
+        ./venv/bin/poetry run python manage.py migrate
 
     - name: Run pytest tests
-      working-directory: ./buzzaar-backend
+      working-directory: ./buzzaar-backend/buzzaar_core/
       run: |
-        ./venv/bin/pytest
+        ./venv/bin/poetry run pytest
 
