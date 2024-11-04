@@ -4,13 +4,13 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y python3 make g++
 
-COPY buzzaar-client/package*.json ./
-
-RUN rm -rf node_modules package-lock.json
+COPY buzzaar-ui/package*.json ./
 
 RUN npm install --omit=optional
 
-COPY buzzaar-client/ .
+RUN npm install -g @angular/cli
+
+COPY buzzaar-ui/ .
 
 EXPOSE 4200
 

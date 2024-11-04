@@ -24,7 +24,8 @@ services:
       dockerfile: Dockerfile
     container_name: frontend
     volumes:
-      - ./buzzaar-frontend/buzzaar-client:/app
+      - ./buzzaar-frontend/buzzaar-ui:/app
+      - /app/node_modules
     ports:
       - "4200:4200" 
     command: npm start
