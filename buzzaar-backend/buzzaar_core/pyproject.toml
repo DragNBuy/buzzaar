@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "buzzaar_core"
 version = "0.1.0"
-description = ""
-authors = ["Your Name <you@example.com>"]
+description = "A comprehensive C2C marketplace platform with match-to-buy feature."
+authors = ["codelotusr <lunarcode0@gmail.com>"]
 license = "GPLv3"
 
 [tool.poetry.dependencies]

@@ -15,14 +15,22 @@ def test_user_registration(api_client):
         "username": "newuser",
         "password1": "strong!Password123",
         "password2": "strong!Password123",
-        "city": "test city",
         "phone": "123456789",
+        "city": "test city",
+        "street": "test street",
+        "house": "123",
+        "postal_code": "123456",
     }
     response = api_client.post(url, data, format="json")
 
     assert response.status_code == status.HTTP_201_CREATED
     assert response.data["user"]["email"] == "newuser@gmail.com"
     assert response.data["user"]["username"] == "newuser"
+
+    address = response.data["user"].get("address")
+    assert address is not None, "Address data should be present in the response"
+    assert address["city"] == "test city"
+    assert address["street"] == "test street"
 
 
 @pytest.mark.authentication
@@ -37,8 +45,11 @@ def test_user_registration_with_empty_fields(api_client):
         "username": "",
         "password1": "",
         "password2": "",
-        "city": "",
         "phone": "",
+        "city": "",
+        "street": "",
+        "house": "",
+        "postal_code": "",
     }
     response = api_client.post(url, data, format="json")
 
@@ -46,6 +57,7 @@ def test_user_registration_with_empty_fields(api_client):
     assert response.data["email"][0] == "This field may not be blank."
     assert response.data["username"][0] == "This field may not be blank."
     assert response.data["password1"][0] == "This field may not be blank."
+    assert response.data["password2"][0] == "This field may not be blank."
 
 
 @pytest.mark.authentication

@@ -121,6 +121,7 @@ REST_FRAMEWORK = {
 REST_AUTH = {
     "LOGIN_SERIALIZER": "users.serializers.CustomLoginSerializer",
     "USE_JWT": True,
+    "USER_DETAILS_SERIALIZER": "users.serializers.CustomUserSerializer",
     "REGISTER_SERIALIZER": "users.serializers.CustomRegisterSerializer",
     "REGISTER_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
     "JWT_AUTH_COOKIE": "buzzaar_access_token",
