@@ -1,0 +1,3 @@
+[submodule "buzzaar-frontend/buzzaar-ui"]
+	path = buzzaar-frontend/buzzaar-ui
+	url = git@github.com:DragNBuy/buzzaar-ui.git
