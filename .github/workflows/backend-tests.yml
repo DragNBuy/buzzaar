@@ -11,6 +11,7 @@ on:
       - 'buzzaar-backend/**'
     branches:
       - main
+      - dev
   workflow_dispatch: {}
 
 jobs:
