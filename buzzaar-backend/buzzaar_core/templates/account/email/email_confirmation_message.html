@@ -1,0 +1,7 @@
+{% load account %}
+{% blocktrans %} Hello! Please confirm your email address by
+clicking the link below: {% endblocktrans %}
+<a href="http://localhost:4200/email-confirmation?key={{ key }}">Confirm my email address</a>
+{% blocktrans %}
+If you did not make this request, you can ignore this email. {%
+endblocktrans %}

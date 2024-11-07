@@ -1,0 +1,10 @@
+Hello {{ user.username }}!
+
+You're receiving this email someone has tried to register an account on {{ current_site.domain }} with your email address.
+
+To confirm this is correct, please visit the following link:
+
+{{ activate_url }}
+
+Thank you for using Buzzaar!
+

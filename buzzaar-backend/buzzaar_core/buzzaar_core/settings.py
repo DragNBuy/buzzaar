@@ -152,15 +152,20 @@ SIMPLE_JWT = {
 }
 
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_CONFIRM_EMAIL_ON_GET = False
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http"
 ACCOUNT_EMAIL_CONFIRMATION_HMAC = True
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 DEFAULT_FROM_EMAIL = "webmaster@localhost"
+
+# DJANGO_REST_MULTITENANT_DEFAULT_REDIRECT_URL = (
+#     "http://localhost:4200/email-success-page/"
+# )
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Buzzaar API",
@@ -186,6 +191,8 @@ TEMPLATES = [
         },
     },
 ]
+
+ACCOUNT_ADAPTER = "users.adapters.CustomAccountAdapter"
 
 WSGI_APPLICATION = "buzzaar_core.wsgi.application"
 
