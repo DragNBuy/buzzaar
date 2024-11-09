@@ -1,5 +1,5 @@
 from dj_rest_auth.registration.serializers import RegisterSerializer
-from dj_rest_auth.serializers import LoginSerializer
+from dj_rest_auth.serializers import LoginSerializer, ValidationError, authenticate
 from rest_framework import serializers
 
 from .models import Address, CustomUser
@@ -56,6 +56,7 @@ class CustomRegisterSerializer(RegisterSerializer):
 
             user.email = self.validated_data.get("email", "")
             user.phone = self.validated_data.get("phone", "")
+            user.is_active = False
             user.save(update_fields=["email", "phone", "address"])
 
         return user
@@ -67,3 +68,9 @@ class CustomLoginSerializer(LoginSerializer):
     password = serializers.CharField(
         style={"input_type": "password"}, trim_whitespace=False
     )
+
+    def validate(self, attrs):
+        user = authenticate(self.context["request"], **attrs)
+        if user and not user.is_active:
+            raise ValidationError("Account is inactive. Please confirm your email.")
+        return super().validate(attrs)

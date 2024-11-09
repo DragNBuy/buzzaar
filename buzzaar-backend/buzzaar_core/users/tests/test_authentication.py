@@ -1,4 +1,4 @@
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 import pytest
 from django.core import mail
@@ -43,10 +43,14 @@ def test_user_registration(api_client):
     assert confirmation_url is not None, "No confirmation URL found in email"
 
     parsed_url = urlparse(confirmation_url)
-    confirmation_key = parsed_url.path.split("/")[-2]
+    query_params = parse_qs(parsed_url.query)
+    confirmation_key = query_params.get("key", [None])[0]
+
+    assert confirmation_key is not None, "No confirmation key found in URL"
 
     verify_url = reverse("rest_verify_email")
     response = api_client.post(verify_url, data={"key": confirmation_key})
+
     assert response.status_code == status.HTTP_200_OK
     assert response.data["detail"] == "ok"
 
