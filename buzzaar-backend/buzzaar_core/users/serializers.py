@@ -56,7 +56,6 @@ class CustomRegisterSerializer(RegisterSerializer):
 
             user.email = self.validated_data.get("email", "")
             user.phone = self.validated_data.get("phone", "")
-            user.is_active = False
             user.save(update_fields=["email", "phone", "address"])
 
         return user
@@ -69,8 +68,8 @@ class CustomLoginSerializer(LoginSerializer):
         style={"input_type": "password"}, trim_whitespace=False
     )
 
-    def validate(self, attrs):
-        user = authenticate(self.context["request"], **attrs)
-        if user and not user.is_active:
-            raise ValidationError("Account is inactive. Please confirm your email.")
-        return super().validate(attrs)
+    # def validate(self, attrs):
+    #     user = authenticate(self.context["request"], **attrs)
+    #     if user and not user.is_active:
+    #         raise ValidationError("Account is inactive. Please confirm your email.")
+    #     return super().validate(attrs)
