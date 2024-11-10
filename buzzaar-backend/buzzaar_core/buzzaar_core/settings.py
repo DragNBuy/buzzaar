@@ -10,7 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import django_stubs_ext
+
+django_stubs_ext.monkeypatch()
+
 import os
+from datetime import timedelta
 from pathlib import Path
 
 import environ
@@ -32,7 +37,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])  # type: ignore
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS") or []
 
 
 # Application definition
@@ -44,18 +49,20 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
     # Rest framework and other stuff
     "rest_framework",
-    "axes",
+    "rest_framework.authtoken",
     "corsheaders",
     "django_filters",
-    # need to add all our apps + installed module apps
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "allauth.socialaccount.providers.google",
+    "dj_rest_auth",
+    "drf_spectacular",
     # debugging during dev
     "debug_toolbar",
+    "django_extensions",
     # hijack user in admin panel (very useful for testing)
     "hijack",
     # if we decide to use cloud storage (not that hard to set up Amazon S3 or google and good experience)
@@ -78,11 +85,14 @@ AUTHENTICATION_BACKENDS = (
     "allauth.account.auth_backends.AuthenticationBackend",
 )
 
+AUTH_USER_MODEL = "users.CustomUser"
+
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "/accounts/login"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -90,7 +100,79 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
+
+
+CORS_ALLOWED_ORIGINS = ["http://localhost:4200"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:4200"]
+
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_HEADERS = [
+    "content-type",
+    "authorization",
+    "x-csrf-token",
+    "access-control-allow-origin",
+]
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+REST_AUTH = {
+    "LOGIN_SERIALIZER": "users.serializers.CustomLoginSerializer",
+    "USE_JWT": True,
+    "USER_DETAILS_SERIALIZER": "users.serializers.CustomUserSerializer",
+    "REGISTER_SERIALIZER": "users.serializers.CustomRegisterSerializer",
+    "REGISTER_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
+    "JWT_AUTH_COOKIE": "buzzaar_access_token",
+    "JWT_AUTH_REFRESH_COOKIE": "buzzaar_refresh_token",
+    "JWT_AUTH_REFRESH_COOKIE_PATH": "/",
+    "JWT_AUTH_SECURE": False,
+    "JWT_AUTH_HTTPONLY": True,
+    "JWT_AUTH_SAMESITE": "Lax",
+    "JWT_AUTH_RETURN_EXPIRATION": False,
+    "JWT_AUTH_COOKIE_USE_CSRF": False,
+    "JWT_AUTH_COOKIE_ENFORCE_CSRF_ON_UNAUTHENTICATED": False,
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=3),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+}
+
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_CONFIRM_EMAIL_ON_GET = False
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http"
+ACCOUNT_EMAIL_CONFIRMATION_HMAC = True
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+DEFAULT_FROM_EMAIL = "webmaster@localhost"
+
+# DJANGO_REST_MULTITENANT_DEFAULT_REDIRECT_URL = (
+#     "http://localhost:4200/email-success-page/"
+# )
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Buzzaar API",
+    "DESCRIPTION": "C2C platform",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+}
 
 ROOT_URLCONF = "buzzaar_core.urls"
 
@@ -110,6 +192,8 @@ TEMPLATES = [
     },
 ]
 
+ACCOUNT_ADAPTER = "users.adapters.CustomAccountAdapter"
+
 WSGI_APPLICATION = "buzzaar_core.wsgi.application"
 
 RUNNING_IN_DOCKER = os.environ.get("RUNNING_IN_DOCKER", "False") == "True"
@@ -123,7 +207,7 @@ DATABASES = {
         "USER": env("POSTGRES_USER"),
         "PASSWORD": env("POSTGRES_PASSWORD"),
         "HOST": ("db" if RUNNING_IN_DOCKER else "localhost"),
-        "PORT": env("DATABASE_PORT", default=5432),  # type: ignore
+        "PORT": env("DATABASE_PORT") or "5432",
     }
 }
 

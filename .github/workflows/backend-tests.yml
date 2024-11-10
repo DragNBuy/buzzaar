@@ -5,11 +5,14 @@ on:
       - 'buzzaar-backend/**'
     branches:
       - main
+      - dev
   pull_request:
     paths:
       - 'buzzaar-backend/**'
     branches:
       - main
+      - dev
+  workflow_dispatch: {}
 
 jobs:
   backend-test:
@@ -21,7 +24,7 @@ jobs:
         env:
           POSTGRES_DB: test_db
           POSTGRES_USER: test_user
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_PASSWORD: test_password
         options: >-
           --health-cmd="pg_isready -h localhost -U test_user -d test_db"
           --health-interval=10s
@@ -37,43 +40,42 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: 3.12
+        python-version: '3.12'
 
     - name: Install Django dependencies
-      working-directory: ./buzzaar-backend
+      working-directory: ./buzzaar-backend/buzzaar_core
       run: |
         python -m venv venv
-        source venv/bin/activate
-        pip install --upgrade pip
-        pip install -r requirements.txt
+        ./venv/bin/pip install --upgrade pip setuptools
+        ./venv/bin/pip install poetry
+        ./venv/bin/poetry lock --no-update
+        ./venv/bin/poetry install
 
     - name: Set environment variables
       run: |
-        echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> $GITHUB_ENV
-        echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> $GITHUB_ENV
-        echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> $GITHUB_ENV
+        echo "POSTGRES_DB=test_db" >> $GITHUB_ENV
+        echo "POSTGRES_USER=test_user" >> $GITHUB_ENV
+        echo "POSTGRES_PASSWORD=test_password" >> $GITHUB_ENV
         echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
-        echo "ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}" >> $GITHUB_ENV
+        echo "ALLOWED_HOSTS=localhost,127.0.0.1" >> $GITHUB_ENV
         echo "DATABASE_HOST=localhost" >> $GITHUB_ENV
         echo "DATABASE_PORT=5432" >> $GITHUB_ENV
-        echo "DEBUG=${{ secrets.DEBUG }}" >> $GITHUB_ENV
+        echo "DEBUG=True" >> $GITHUB_ENV
 
     - name: Wait for PostgreSQL
       run: |
-        until pg_isready -h localhost -p 5432 -U test_user -d test_db; do
+        until pg_isready -h localhost -p ${{ env.DATABASE_PORT }} -U ${{ env.POSTGRES_USER }} -d ${{ env.POSTGRES_DB }}; do
           echo "Waiting for PostgreSQL..."
           sleep 5
         done
 
     - name: Run migrations
-      working-directory: ./buzzaar-backend
+      working-directory: ./buzzaar-backend/buzzaar_core/
       run: |
-        source venv/bin/activate
-        python manage.py migrate
+        ./venv/bin/poetry run python manage.py migrate
 
-    - name: Run Django tests
-      working-directory: ./buzzaar-backend
+    - name: Run pytest tests
+      working-directory: ./buzzaar-backend/buzzaar_core/
       run: |
-        source venv/bin/activate
-        python manage.py test
+        ./venv/bin/poetry run pytest
 

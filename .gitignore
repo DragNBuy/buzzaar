@@ -1,5 +1,8 @@
 # Environments
 .env
+.venv
+.envrc
+.direnv
 venv
 pyrightconfig.json
 
@@ -10,6 +13,7 @@ pyrightconfig.json
 __pycache__
 db.sqlite3
 media
+htmlcov
 
 # Python # 
 *.py[cod] 
@@ -70,3 +74,6 @@ celerybeat-schedule.*
 
 # IDE files #
 .vscode/
+
+# Misc files #
+justfile
