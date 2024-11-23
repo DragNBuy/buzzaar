@@ -34,6 +34,7 @@ urlpatterns = [
         name="account_email_verification_sent",
     ),
     path("", include("home.urls")),
+    path("api/", include("products.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     # Optional UI:
     path(
