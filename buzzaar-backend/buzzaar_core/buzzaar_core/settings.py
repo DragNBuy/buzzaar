@@ -137,7 +137,7 @@ REST_AUTH = {
     "JWT_AUTH_REFRESH_COOKIE": "buzzaar_refresh_token",
     "JWT_AUTH_REFRESH_COOKIE_PATH": "/",
     "JWT_AUTH_SECURE": False,
-    "JWT_AUTH_HTTPONLY": True,
+    "JWT_AUTH_HTTPONLY": False,
     "JWT_AUTH_SAMESITE": "Lax",
     "JWT_AUTH_RETURN_EXPIRATION": False,
     "JWT_AUTH_COOKIE_USE_CSRF": False,
