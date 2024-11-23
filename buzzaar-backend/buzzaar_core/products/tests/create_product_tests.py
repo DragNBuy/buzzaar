@@ -1,6 +1,7 @@
 import pytest
 from django.urls import reverse
 from rest_framework import status
+
 from products.views import ProductViewSet
 
 
@@ -8,17 +9,17 @@ from products.views import ProductViewSet
 def test_product_creation_1(api_client):
     """
     # Pass when user creates a product
-    # """
+    #"""
 
     response = givenUser(api_client)
 
-    user_id = response.json().get('user').get('id')
+    user_id = response.json().get("user").get("id")
     url = reverse("products-list")
     data = {
         "owner_id": user_id,
         "title": "My Item",
         "description": "This is my item that i wish to sell",
-        "price": "12.3",
+        "initial_asking_price": "12.3",
     }
     response = api_client.post(url, data, format="json")
 
@@ -29,17 +30,17 @@ def test_product_creation_1(api_client):
 def test_product_creation_fail_1(api_client):
     """
     # Fail when product price exceeds 6 digits before floating point
-    # """
+    #"""
 
     response = givenUser(api_client)
 
-    user_id = response.json().get('user').get('id')
+    user_id = response.json().get("user").get("id")
     url = reverse("products-list")
     data = {
         "owner_id": user_id,
         "title": "My Item",
         "description": "This is my item that i wish to sell",
-        "price": "1234567.3",
+        "initial_asking_price": "1234567.3",
     }
     response = api_client.post(url, data, format="json")
 
@@ -50,14 +51,14 @@ def test_product_creation_fail_1(api_client):
 def test_product_creation_fail_2(api_client):
     """
     # Fail when product is created by non-existing user
-    # """
+    #"""
 
     url = reverse("products-list")
     data = {
         "owner_id": "999",
         "title": "My Item",
         "description": "This is my item that i wish to sell",
-        "price": "12.3",
+        "intitial_asking_price": "12.3",
     }
     response = api_client.post(url, data, format="json")
 
