@@ -1,10 +1,11 @@
 import pytest
 from django.urls import reverse
 from rest_framework import status
+from products.views import ProductViewSet
 
 
 @pytest.mark.django_db
-def test_product_creation(api_client):
+def test_product_creation_1(api_client):
     """
     # Pass when user creates a product
     # """
@@ -12,7 +13,7 @@ def test_product_creation(api_client):
     response = givenUser(api_client)
 
     user_id = response.json().get('user').get('id')
-    url = reverse("createProduct")
+    url = reverse("products-list")
     data = {
         "owner_id": user_id,
         "title": "My Item",
@@ -25,7 +26,7 @@ def test_product_creation(api_client):
 
 
 @pytest.mark.django_db
-def test_product_fail_1(api_client):
+def test_product_creation_fail_1(api_client):
     """
     # Fail when product price exceeds 6 digits before floating point
     # """
@@ -33,7 +34,7 @@ def test_product_fail_1(api_client):
     response = givenUser(api_client)
 
     user_id = response.json().get('user').get('id')
-    url = reverse("createProduct")
+    url = reverse("products-list")
     data = {
         "owner_id": user_id,
         "title": "My Item",
@@ -51,7 +52,7 @@ def test_product_creation_fail_2(api_client):
     # Fail when product is created by non-existing user
     # """
 
-    url = reverse("createProduct")
+    url = reverse("products-list")
     data = {
         "owner_id": "999",
         "title": "My Item",
