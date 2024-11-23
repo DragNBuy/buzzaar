@@ -57,6 +57,7 @@ def test_user_registration(api_client):
     login_url = reverse("rest_login")
     login_data = {"email": "newuser@gmail.com", "password": "strong!Password123"}
     login_response = api_client.post(login_url, login_data, format="json")
+    print(login_response)
 
     assert login_response.status_code == status.HTTP_200_OK
     assert "buzzaar_access_token" in login_response.cookies
