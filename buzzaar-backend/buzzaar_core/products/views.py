@@ -10,9 +10,6 @@ from rest_framework.viewsets import ModelViewSet
 
 
 class ProductViewSet(ModelViewSet):
-    authentication_classes = [] #disables authentication
-    permission_classes = [] #disables permission
-
     def list(self, request):
         products = list(Product.objects.all().values())
         return JsonResponse(products, safe=False)
