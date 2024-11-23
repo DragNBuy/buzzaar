@@ -10,6 +10,9 @@ from rest_framework.viewsets import ModelViewSet
 
 
 class ProductViewSet(ModelViewSet):
+    authentication_classes = [] #disables authentication
+    permission_classes = [] #disables permission
+
     def list(self, request):
         products = list(Product.objects.all().values())
         return JsonResponse(products, safe=False)
@@ -50,6 +53,14 @@ class ProductViewSet(ModelViewSet):
             return JsonResponse({"status": "fail", "message": "Failed to create product"}, status=400)
 
         return JsonResponse({"status": "ok", "message": f"product id={product.pk} created"}, status=201)
+
+    def destroy(self, request, pk=None):
+        try:
+            Product.objects.filter(id=pk).delete()
+        except ValueError:
+            return JsonResponse({"status": "fail", "message": "id must be an integer"})
+
+        return JsonResponse({"status": "ok", "message": f"deleted product id={pk}"})
 
 
 # use this to get CSRF token
