@@ -2,8 +2,6 @@ import pytest
 from django.urls import reverse
 from rest_framework import status
 
-from products.views import ProductViewSet
-
 
 @pytest.mark.django_db
 def test_product_creation_1(api_client):
@@ -29,28 +27,7 @@ def test_product_creation_1(api_client):
 @pytest.mark.django_db
 def test_product_creation_fail_1(api_client):
     """
-    # Fail when product price exceeds 6 digits before floating point
-    #"""
-
-    response = givenUser(api_client)
-
-    user_id = response.json().get("user").get("id")
-    url = reverse("products-list")
-    data = {
-        "owner_id": user_id,
-        "title": "My Item",
-        "description": "This is my item that i wish to sell",
-        "initial_asking_price": "1234567.3",
-    }
-    response = api_client.post(url, data, format="json")
-
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
-
-
-@pytest.mark.django_db
-def test_product_creation_fail_2(api_client):
-    """
-    # Fail when product is created by non-existing user
+    # Fail when product is created by user who is not logged in
     #"""
 
     url = reverse("products-list")
@@ -62,11 +39,53 @@ def test_product_creation_fail_2(api_client):
     }
     response = api_client.post(url, data, format="json")
 
-    assert response.status_code == status.HTTP_424_FAILED_DEPENDENCY
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+@pytest.mark.django_db
+def test_product_creation_fail_2(api_client):
+    """
+    # Fail when price is negative
+    #"""
+
+    response = givenUser(api_client)
+
+    user_id = response.json().get("user").get("id")
+    url = reverse("products-list")
+    data = {
+        "owner_id": user_id,
+        "title": "My Item",
+        "description": "This is my item that i wish to sell",
+        "initial_asking_price": "-11.11",
+    }
+    response = api_client.post(url, data, format="json")
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.django_db
+def test_product_creation_fail_3(api_client):
+    """
+    # Fail when price has more than 8 digits in total
+    #"""
+
+    response = givenUser(api_client)
+
+    user_id = response.json().get("user").get("id")
+    url = reverse("products-list")
+    data = {
+        "owner_id": user_id,
+        "title": "My Item",
+        "description": "This is my item that i wish to sell",
+        "initial_asking_price": "12345678.11",
+    }
+    response = api_client.post(url, data, format="json")
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
 def givenUser(api_client):
-    url = reverse("rest_register")
+    register_url = reverse("rest_register")
     data = {
         "email": "newuser@gmail.com",
         "username": "newuser",
@@ -78,4 +97,11 @@ def givenUser(api_client):
         "house": "123",
         "postal_code": "123456",
     }
-    return api_client.post(url, data, format="json")
+    api_client.post(register_url, data, format="json")
+
+    login_url = reverse("rest_login")
+    login_data = {
+        "email": "newuser@gmail.com",
+        "password": "strong!Password123"
+    }
+    return api_client.post(login_url, login_data, format="json")

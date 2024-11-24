@@ -3,6 +3,7 @@ from rest_framework import serializers
 from users.models import CustomUser
 
 from .models import Product
+from datetime import datetime
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -38,4 +39,10 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         owner = validated_data.pop("owner_id")
-        return Product.objects.create(owner=owner, **validated_data)
+        date = datetime.now()
+        return Product.objects.create(
+            owner=owner,
+            date_created=date,
+            visible=True,
+            **validated_data
+        )
