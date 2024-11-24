@@ -23,6 +23,12 @@ from drf_spectacular.views import (
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
+from rest_framework import routers
+from products.views import ProductViewSet
+
+router = routers.SimpleRouter()
+router.register(r'api/products', ProductViewSet, basename="products")
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -34,6 +40,7 @@ urlpatterns = [
         name="account_email_verification_sent",
     ),
     path("", include("home.urls")),
+    path("api/", include("products.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     # Optional UI:
     path(
@@ -47,3 +54,5 @@ urlpatterns = [
         name="redoc",
     ),
 ]
+
+urlpatterns += router.urls

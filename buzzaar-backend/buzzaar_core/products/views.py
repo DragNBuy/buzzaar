@@ -1,3 +1,18 @@
+from dj_rest_auth.registration.views import IsAuthenticated
 from django.shortcuts import render
+from rest_framework.viewsets import ModelViewSet
 
-# Create your views here.
+from .models import Product
+from .serializers import ProductSerializer
+
+
+class ProductViewSet(ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticated]
+
+
+# use this to get CSRF token
+# what kind of a weird hack is this
+def helloworld(request):
+    return render(request, "hello.html")
