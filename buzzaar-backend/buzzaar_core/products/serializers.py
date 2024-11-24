@@ -16,6 +16,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "id",
             "title",
             "description",
+            "condition",
             "initial_asking_price",
             "date_created",
             "visible",
