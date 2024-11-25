@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     # our apps
     "users",
     "products",
+    "product_categories",
     "billing",
     "messaging",
 ]

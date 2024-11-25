@@ -25,9 +25,11 @@ from drf_spectacular.views import (
 )
 from rest_framework import routers
 from products.views import ProductViewSet
+from product_categories.views import ProductCategoryViewSet
 
 router = routers.SimpleRouter()
-router.register(r'api/products', ProductViewSet, basename="products")
+router.register(r"api/products", ProductViewSet, basename="products")
+router.register(r"api/product_categories", ProductCategoryViewSet, basename="product_categories")
 
 
 urlpatterns = [

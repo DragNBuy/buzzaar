@@ -1,90 +1,109 @@
-import pytest
+from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
+from rest_framework.test import APIClient
 
 
-@pytest.mark.django_db
-def test_product_creation_1(api_client):
-    """
-    # Pass when user creates a product
-    #"""
+class ProductCreationTestCase(TestCase):
+    def setUp(self):
+        self.valid_price = "12.3"
+        self.api_client = APIClient()
 
-    response = givenUser(api_client)
+    def test_productCreation1(self):
+        """
+        # Pass when user creates a product
+        #"""
+        user_id = givenRegisteredUser(self.api_client)
+        givenLoggedInUser(self.api_client)
+        category_id = givenCategory(self.api_client)
+        products_url = reverse("products-list")
+        product_data = {
+            "owner_id": user_id,
+            "category_id": category_id,
+            "condition": "New",
+            "title": "My Item",
+            "description": "This is my item that i wish to sell",
+            "initial_asking_price": self.valid_price,
+        }
+        product_response = self.api_client.post(products_url, product_data, format="json")
+        assert product_response.status_code == status.HTTP_201_CREATED
 
-    user_id = response.json().get("user").get("id")
-    url = reverse("products-list")
-    data = {
-        "owner_id": user_id,
-        "title": "My Item",
-        "description": "This is my item that i wish to sell",
-        "initial_asking_price": "12.3",
-    }
-    response = api_client.post(url, data, format="json")
+    def test_productCreationFail1(self):
+        """
+        # Fail when price is negative
+        #"""
+        user_id = givenRegisteredUser(self.api_client)
+        givenLoggedInUser(self.api_client)
+        category_id = givenCategory(self.api_client)
+        url = reverse("products-list")
+        data = {
+            "owner_id": user_id,
+            "category_id": category_id,
+            "condition": "New",
+            "title": "My Item",
+            "description": "This is my item that i wish to sell",
+            "initial_asking_price": "-11.11",
+        }
+        product_response = self.api_client.post(url, data, format="json")
+        assert product_response.status_code == status.HTTP_400_BAD_REQUEST
 
-    assert response.status_code == status.HTTP_201_CREATED
+    def test_productCreationFail2(self):
+        """
+        # Fail when price has more than 8 digits in total
+        #"""
+        user_id = givenRegisteredUser(self.api_client)
+        givenLoggedInUser(self.api_client)
+        category_id = givenCategory(self.api_client)
+        url = reverse("products-list")
+        data = {
+            "owner_id": user_id,
+            "category_id": category_id,
+            "condition": "New",
+            "title": "My Item",
+            "description": "This is my item that i wish to sell",
+            "initial_asking_price": "12345678.11",
+        }
+        product_response = self.api_client.post(url, data, format="json")
+        assert product_response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_productCreationFail3(self):
+        """
+        # Fail when category is not specified
+        #"""
+        user_id = givenRegisteredUser(self.api_client)
+        givenLoggedInUser(self.api_client)
+        url = reverse("products-list")
+        data = {
+            "owner_id": user_id,
+            "condition": "New",
+            "title": "My Item",
+            "description": "This is my item that i wish to sell",
+            "initial_asking_price": self.valid_price,
+        }
+        product_response = self.api_client.post(url, data, format="json")
+        assert product_response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_productCreationFail4(self):
+        """
+        # Fail when condition is not specified
+        #"""
+        user_id = givenRegisteredUser(self.api_client)
+        givenLoggedInUser(self.api_client)
+        category_id = givenCategory(self.api_client)
+        givenLoggedInUser(self.api_client)
+        url = reverse("products-list")
+        data = {
+            "owner_id": user_id,
+            "category_id": category_id,
+            "title": "My Item",
+            "description": "This is my item that i wish to sell",
+            "initial_asking_price": self.valid_price,
+        }
+        product_response = self.api_client.post(url, data, format="json")
+        assert product_response.status_code == status.HTTP_400_BAD_REQUEST
 
 
-@pytest.mark.django_db
-def test_product_creation_fail_1(api_client):
-    """
-    # Fail when product is created by user who is not logged in
-    #"""
-
-    url = reverse("products-list")
-    data = {
-        "owner_id": "999",
-        "title": "My Item",
-        "description": "This is my item that i wish to sell",
-        "intitial_asking_price": "12.3",
-    }
-    response = api_client.post(url, data, format="json")
-
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-
-
-@pytest.mark.django_db
-def test_product_creation_fail_2(api_client):
-    """
-    # Fail when price is negative
-    #"""
-
-    response = givenUser(api_client)
-
-    user_id = response.json().get("user").get("id")
-    url = reverse("products-list")
-    data = {
-        "owner_id": user_id,
-        "title": "My Item",
-        "description": "This is my item that i wish to sell",
-        "initial_asking_price": "-11.11",
-    }
-    response = api_client.post(url, data, format="json")
-
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
-
-
-@pytest.mark.django_db
-def test_product_creation_fail_3(api_client):
-    """
-    # Fail when price has more than 8 digits in total
-    #"""
-
-    response = givenUser(api_client)
-
-    user_id = response.json().get("user").get("id")
-    url = reverse("products-list")
-    data = {
-        "owner_id": user_id,
-        "title": "My Item",
-        "description": "This is my item that i wish to sell",
-        "initial_asking_price": "12345678.11",
-    }
-    response = api_client.post(url, data, format="json")
-
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
-
-
-def givenUser(api_client):
+def givenRegisteredUser(api_client):
     register_url = reverse("rest_register")
     data = {
         "email": "newuser@gmail.com",
@@ -97,11 +116,23 @@ def givenUser(api_client):
         "house": "123",
         "postal_code": "123456",
     }
-    api_client.post(register_url, data, format="json")
+    response = api_client.post(register_url, data, format="json")
+    return response.data["user"]["id"]
 
+
+def givenLoggedInUser(api_client):
     login_url = reverse("rest_login")
     login_data = {
         "email": "newuser@gmail.com",
         "password": "strong!Password123"
     }
     return api_client.post(login_url, login_data, format="json")
+
+
+def givenCategory(api_client):
+    categories_url = reverse("product_categories-list")
+    category_data = {
+        "category": "Kompiuteriai"
+    }
+    response = api_client.post(categories_url, category_data, format="json")
+    return response.data["id"]

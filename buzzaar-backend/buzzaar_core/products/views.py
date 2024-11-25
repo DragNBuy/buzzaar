@@ -13,6 +13,5 @@ class ProductViewSet(ModelViewSet):
 
 
 # use this to get CSRF token
-# what kind of a weird hack is this
 def helloworld(request):
     return render(request, "hello.html")
