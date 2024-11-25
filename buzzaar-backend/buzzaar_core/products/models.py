@@ -1,6 +1,7 @@
 from enum import Enum
 from django.db import models
 from users.models import CustomUser
+from product_categories.models import ProductCategory
 
 
 class Condition(Enum):
@@ -12,7 +13,11 @@ class Condition(Enum):
 
 class Product(models.Model):
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    # todo: category
+    category = models.ForeignKey(
+        ProductCategory,
+        null=True,
+        on_delete=models.SET_NULL
+    )
     condition = models.CharField(max_length=22)
     title = models.CharField(max_length=30)
     description = models.CharField(max_length=500)
