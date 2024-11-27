@@ -160,6 +160,8 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http"
 ACCOUNT_EMAIL_CONFIRMATION_HMAC = True
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
+OLD_PASSWORD_FIELD_ENABLED = True
+LOGOUT_ON_PASSWORD_CHANGE = False
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
@@ -260,7 +262,12 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("redis" if RUNNING_IN_DOCKER else "localhost", int(env("REDIS_PORT") or 6379))]
-        }
+            "hosts": [
+                (
+                    "redis" if RUNNING_IN_DOCKER else "localhost",
+                    int(env("REDIS_PORT") or 6379),
+                )
+            ]
+        },
     }
 }
