@@ -59,6 +59,11 @@ urlpatterns = [
         "api/chats/",
         include('messaging.urls'),
         name="chats",
+    ),
+    path(
+        "api/users",
+        include('users.urls'),
+        name="users"
     )
 ]
 
