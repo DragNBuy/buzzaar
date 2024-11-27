@@ -10,8 +10,8 @@ from django.shortcuts import redirect, reverse
 @api_view(['POST'])
 def start_convo(request):
     data = request.data
-    username = data.pop('username')
-    participant = get_object_or_404(User, username=username)
+    email = data.pop('email')
+    participant = get_object_or_404(User, email=email)
     convo = Conversation.objects.filter(Q(buyer=request.user, seller=participant) |
                                         Q(buyer=participant, seller=request.user))
     if convo.exists():
