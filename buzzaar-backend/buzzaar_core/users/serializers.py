@@ -21,6 +21,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
 class CustomRegisterSerializer(RegisterSerializer):
     email = serializers.EmailField(required=True)
+    first_name = serializers.CharField(required=True)
+    last_name = serializers.CharField(required=True)
     city = serializers.CharField(required=False)
     street = serializers.CharField(required=False)
     house = serializers.CharField(required=False)
@@ -31,6 +33,8 @@ class CustomRegisterSerializer(RegisterSerializer):
         data = super().get_cleaned_data()
         if isinstance(self.initial_data, dict):
             data["email"] = self.initial_data.get("email", "")
+            data["first_name"] = self.initial_data.get("first_name", "")
+            data["last_name"] = self.initial_data.get("last_name", "")
             data["city"] = self.initial_data.get("city", "")
             data["street"] = self.initial_data.get("street", "")
             data["house"] = self.initial_data.get("house", "")
@@ -55,8 +59,12 @@ class CustomRegisterSerializer(RegisterSerializer):
                 user.address = address
 
             user.email = self.validated_data.get("email", "")
+            user.first_name = self.validated_data.get("first_name", "")
+            user.last_name = self.validated_data.get("last_name", "")
             user.phone = self.validated_data.get("phone", "")
-            user.save(update_fields=["email", "phone", "address"])
+            user.save(
+                update_fields=["email", "first_name", "last_name", "phone", "address"]
+            )
 
         return user
 
