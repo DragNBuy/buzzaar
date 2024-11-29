@@ -55,6 +55,16 @@ urlpatterns = [
         SpectacularRedocView.as_view(url_name="schema"),
         name="redoc",
     ),
+    path(
+        "api/chats/",
+        include('messaging.urls'),
+        name="chats",
+    ),
+    path(
+        "api/users",
+        include('users.urls'),
+        name="users"
+    )
 ]
 
 urlpatterns += router.urls
