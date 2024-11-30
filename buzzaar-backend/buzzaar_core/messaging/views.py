@@ -15,14 +15,15 @@ def start_convo(request):
     data = request.data
     email = data.pop("email")
     participant = get_object_or_404(User, email=email)
-    convo = Conversation.objects.filter(
-        Q(buyer=request.user, seller=participant)
-        | Q(buyer=participant, seller=request.user)
-    )
+    convo = Conversation.objects.filter(Q(initiator=request.user, receiver=participant) |
+                                        Q(initiator=participant, receiver=request.user))
     if convo.exists():
-        return redirect(reverse("get_conversation", args=convo[0].id))
+        return redirect(reverse('get_conversation', args=(convo[0].id,)))
     else:
-        convo = Conversation.objects.create(buyer=request.user, seller=participant)
+        convo = Conversation.objects.create(
+            initiator=request.user,
+            receiver=participant
+        )
         return Response(ConversationSerializer(instance=convo).data)
 
 
@@ -38,8 +39,6 @@ def get_conversation(request, convo_id):
 
 @api_view(["GET"])
 def conversations(request):
-    conversation_list = Conversation.objects.filter(
-        Q(buyer=request.user) | Q(seller=request.user)
-    )
+    conversation_list = Conversation.objects.filter(Q(initiator=request.user) | Q(receiver=request.user))
     serializer = ConversationListSerializer(instance=conversation_list)
     return Response(serializer.data)
