@@ -9,7 +9,6 @@ from .models import Product
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    owner_id = serializers.IntegerField(write_only=True)
     owner = serializers.StringRelatedField(read_only=True)
 
     category_id = serializers.IntegerField(write_only=True)
