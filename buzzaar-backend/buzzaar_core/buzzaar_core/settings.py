@@ -265,7 +265,7 @@ CHANNEL_LAYERS = {
             "hosts": [
                 (
                     "redis" if RUNNING_IN_DOCKER else "localhost",
-                    int(env("REDIS_PORT") or 6379),
+                   int(os.environ.get("REDIS_PORT", "6379")),
                 )
             ]
         },
