@@ -1,9 +1,8 @@
 from dj_rest_auth.registration.views import IsAuthenticated
-from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
 
-from .models import Product
-from .serializers import ProductSerializer
+from .models import Product, ProductPicture
+from .serializers import ProductPictureSerializer, ProductSerializer
 
 
 class ProductViewSet(ModelViewSet):
@@ -12,6 +11,7 @@ class ProductViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
 
-# use this to get CSRF token
-def helloworld(request):
-    return render(request, "hello.html")
+class ProductPictureViewSet(ModelViewSet):
+    queryset = ProductPicture.objects.all()
+    serializer_class = ProductPictureSerializer
+    permission_classes = [IsAuthenticated]

@@ -28,6 +28,7 @@ class CustomRegisterSerializer(RegisterSerializer):
     house = serializers.CharField(required=False)
     postal_code = serializers.CharField(required=False)
     phone = serializers.CharField(required=False)
+    profile_picture = serializers.ImageField(required=False)
 
     def get_cleaned_data(self):
         data = super().get_cleaned_data()
@@ -40,6 +41,8 @@ class CustomRegisterSerializer(RegisterSerializer):
             data["house"] = self.initial_data.get("house", "")
             data["postal_code"] = self.initial_data.get("postal_code", "")
             data["phone"] = self.initial_data.get("phone", "")
+            data["profile_picture"] = self.initial_data.get("profile_picture", "")
+
         return data
 
     def save(self, request):
@@ -62,8 +65,19 @@ class CustomRegisterSerializer(RegisterSerializer):
             user.first_name = self.validated_data.get("first_name", "")
             user.last_name = self.validated_data.get("last_name", "")
             user.phone = self.validated_data.get("phone", "")
+
+            if request.FILES.get("profile_picture"):
+                user.profile_picture = request.FILES("profile_picture")
+
             user.save(
-                update_fields=["email", "first_name", "last_name", "phone", "address"]
+                update_fields=[
+                    "email",
+                    "first_name",
+                    "last_name",
+                    "phone",
+                    "address",
+                    "profile_picture",
+                ]
             )
 
         return user

@@ -9,7 +9,7 @@ class CustomUser(AbstractUser):
     )
     phone = models.CharField(max_length=50, blank=True)
     profile_picture = models.ImageField(
-        upload_to="profile_pictures/", blank=True, null=True
+        upload_to="images/profile_pictures/", blank=True, null=True
     )
 
     def __str__(self) -> str:

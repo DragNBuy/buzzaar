@@ -3,9 +3,28 @@ from datetime import datetime
 from rest_framework import serializers
 
 from product_categories.models import ProductCategory
-from users.models import CustomUser
 
-from .models import Product
+from .models import Product, ProductPicture
+
+
+class ProductPictureSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ProductPicture
+        fields = ["id", "product", "image", "uploaded_at"]
+        read_only_fields = ["id", "uploaded_at"]
+
+    def validate_image(self, value):
+        if value.size > 10 * 1024 * 1024:
+            raise serializers.ValidationError("Image size must not exceed 5 MB.")
+
+        valid_content_types = ["image/jpeg", "image/png", "image/jpg"]
+        content_type = value.file.content_type
+        if content_type not in valid_content_types:
+            raise serializers.ValidationError(
+                "Invalid file type. Only JPEG, PNG, and JPG are allowed."
+            )
+        return value
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -27,6 +46,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "date_created",
             "visible",
             "owner",
+            "pictures",
         ]
         read_only_fields = ["id", "date_created", "visible", "owner", "category"]
 
