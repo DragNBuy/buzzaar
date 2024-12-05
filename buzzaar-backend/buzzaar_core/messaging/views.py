@@ -39,13 +39,9 @@ def start_convo(request):
 
 @api_view(["GET"])
 def get_conversation(request, convo_id):
-    conversation = Conversation.objects.filter(id=convo_id)
-    if not conversation.exists():
-        return Response({"message": "Conversation does not exist"})
-    else:
-        serializer = ConversationSerializer(instance=conversation[0])
-        return Response(serializer.data)
-
+    conversation = get_object_or_404(Conversation, pk=convo_id)
+    serializer = ConversationSerializer(conversation)
+    return Response(serializer.data)
 
 @api_view(["GET"])
 def conversations(request):
