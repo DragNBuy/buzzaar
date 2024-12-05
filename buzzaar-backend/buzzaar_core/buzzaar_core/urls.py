@@ -16,6 +16,8 @@ Including another URLconf
 """
 
 from dj_rest_auth.registration.views import VerifyEmailView
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 from drf_spectacular.views import (
@@ -24,12 +26,15 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 from rest_framework import routers
-from products.views import ProductViewSet
+
 from product_categories.views import ProductCategoryViewSet
+from products.views import ProductViewSet
 
 router = routers.SimpleRouter()
 router.register(r"api/products", ProductViewSet, basename="products")
-router.register(r"api/product_categories", ProductCategoryViewSet, basename="product_categories")
+router.register(
+    r"api/product_categories", ProductCategoryViewSet, basename="product_categories"
+)
 
 
 urlpatterns = [
@@ -57,14 +62,13 @@ urlpatterns = [
     ),
     path(
         "api/chats/",
-        include('messaging.urls'),
+        include("messaging.urls"),
         name="chats",
     ),
-    path(
-        "api/users/",
-        include('users.urls'),
-        name="users"
-    )
+    path("api/users/", include("users.urls"), name="users"),
 ]
 
 urlpatterns += router.urls
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
