@@ -1,6 +1,7 @@
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -13,8 +14,15 @@ from .serializers import ConversationListSerializer, ConversationSerializer
 @api_view(["POST"])
 def start_convo(request):
     data = request.data
-    email = data.pop("email")
-    participant = get_object_or_404(User, email=email)
+    try:
+        user_id = data.pop("user_id")
+    except KeyError:
+        msg = {"message": "Missing user_id property of the recipient in the request body."}
+        return Response(msg, status=status.HTTP_400_BAD_REQUEST)
+    if request.user.id == user_id:
+        msg = {"message": "You cannot create a conversation with yourself."}
+        return Response(msg, status=status.HTTP_400_BAD_REQUEST)
+    participant = get_object_or_404(User, pk=user_id)
     convo = Conversation.objects.filter(
         Q(initiator=request.user, receiver=participant)
         | Q(initiator=participant, receiver=request.user)
