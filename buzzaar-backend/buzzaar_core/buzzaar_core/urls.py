@@ -26,10 +26,12 @@ from drf_spectacular.views import (
 from rest_framework import routers
 from products.views import ProductViewSet
 from product_categories.views import ProductCategoryViewSet
+from user_likes.views import UserLikeViewSet
 
 router = routers.SimpleRouter()
 router.register(r"api/products", ProductViewSet, basename="products")
 router.register(r"api/product_categories", ProductCategoryViewSet, basename="product_categories")
+router.register(r"api/user_likes", UserLikeViewSet, basename="user_likes")
 
 
 urlpatterns = [
