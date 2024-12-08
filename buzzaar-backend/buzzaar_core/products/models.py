@@ -25,3 +25,6 @@ class Product(models.Model):
     date_created = models.DateTimeField()
     date_sold = models.DateTimeField(null=True)
     visible = models.BooleanField()
+
+    def __str__(self) -> str:
+        return self.title

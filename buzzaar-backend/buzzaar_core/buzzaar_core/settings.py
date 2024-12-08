@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     "channels",
     # our apps
     "users",
+    "user_likes",
     "products",
     "product_categories",
     "billing",
