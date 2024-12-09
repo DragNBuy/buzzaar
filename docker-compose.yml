@@ -3,7 +3,7 @@ services:
     build:
       context: ./buzzaar-backend/
       dockerfile: Dockerfile
-    command: sh -c "poetry run python manage.py migrate && poetry run python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "poetry run python manage.py makemigrations && poetry run python manage.py migrate && poetry run python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./buzzaar-backend/buzzaar_core:/app
       - /app/node_modules

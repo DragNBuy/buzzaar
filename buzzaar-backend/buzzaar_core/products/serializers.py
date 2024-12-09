@@ -3,9 +3,8 @@ from datetime import datetime
 from rest_framework import serializers
 
 from product_categories.models import ProductCategory
-from users.models import CustomUser
 
-from .models import Product
+from .models import Product, ProductReport
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -54,5 +53,19 @@ class ProductSerializer(serializers.ModelSerializer):
             category=category,
             date_created=date,
             visible=True,
+            **validated_data,
+        )
+
+
+class ProductReportSerializer(serializers.ModelSerializer):
+    product = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = ProductReport
+        fields = ["id", "title", "description", "date_created", "product"]
+        read_only_fields = ["id", "date_created"]
+
+    def create(self, validated_data):
+        return ProductReport.objects.create(
             **validated_data,
         )

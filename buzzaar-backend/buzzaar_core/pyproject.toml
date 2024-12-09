@@ -79,6 +79,7 @@ pytest-cov = "^6.0.0"
 redis = "^5.2.0"
 daphne = "^4.1.2"
 channels-redis = "^4.2.1"
+drf-nested-routers = "^0.94.1"
 
 [tool.poetry.group.dev.dependencies]
 django-debug-toolbar = "4.4.6"
