@@ -14,15 +14,10 @@ class MessageSerializer(serializers.ModelSerializer):
 class ConversationListSerializer(serializers.ModelSerializer):
     initiator_id = serializers.IntegerField(read_only=True)
     receiver_id = serializers.IntegerField(read_only=True)
-    last_message = serializers.SerializerMethodField()
 
     class Meta:
         model = Conversation
-        fields = ["initiator_id", "receiver_id", "last_message"]
-
-    def get_last_message(self, instance):
-        message = instance.message_set.first()
-        return MessageSerializer(instance=message)
+        fields = ["id", "initiator_id", "receiver_id"]
 
 
 class ConversationSerializer(serializers.ModelSerializer):
