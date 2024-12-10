@@ -108,6 +108,8 @@ def givenRegisteredUser(api_client):
     data = {
         "email": "newuser@gmail.com",
         "username": "newuser",
+        "first_name": "haha",
+        "last_name": "senis",
         "password1": "strong!Password123",
         "password2": "strong!Password123",
         "phone": "123456789",
