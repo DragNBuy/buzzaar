@@ -261,13 +261,6 @@ ASGI_APPLICATION = "buzzaar_core.asgi.application"
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [
-                (
-                    "redis" if RUNNING_IN_DOCKER else "localhost",
-                   int(os.environ.get("REDIS_PORT", "6379")),
-                )
-            ]
-        },
+        "CONFIG": {"hosts": [("redis" if RUNNING_IN_DOCKER else "localhost", 6379)]},
     }
 }
