@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     "channels",
     # our apps
     "users",
+    "user_likes",
     "products",
     "product_categories",
     "billing",
@@ -126,7 +127,10 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
-    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema"
 }
 
 REST_AUTH = {
@@ -261,13 +265,6 @@ ASGI_APPLICATION = "buzzaar_core.asgi.application"
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [
-                (
-                    "redis" if RUNNING_IN_DOCKER else "localhost",
-                   int(os.environ.get("REDIS_PORT", "6379")),
-                )
-            ]
-        },
+        "CONFIG": {"hosts": [("redis" if RUNNING_IN_DOCKER else "localhost", 6379)]},
     }
 }

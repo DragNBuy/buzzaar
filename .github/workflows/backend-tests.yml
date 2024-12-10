@@ -60,6 +60,7 @@ jobs:
         echo "ALLOWED_HOSTS=localhost,127.0.0.1" >> $GITHUB_ENV
         echo "DATABASE_HOST=localhost" >> $GITHUB_ENV
         echo "DATABASE_PORT=5432" >> $GITHUB_ENV
+        echo "REDIS_PORT=6379" >> $GITHUB_ENV
         echo "DEBUG=True" >> $GITHUB_ENV
 
     - name: Wait for PostgreSQL

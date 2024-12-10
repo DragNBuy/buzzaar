@@ -24,13 +24,24 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 from rest_framework import routers
-from products.views import ProductViewSet
+from rest_framework_nested import routers as nested_routers
+
 from product_categories.views import ProductCategoryViewSet
+from products.views import AllProductReportViewSet, ProductReportViewSet, ProductViewSet
+from user_likes.views import UserLikeViewSet
 
 router = routers.SimpleRouter()
 router.register(r"api/products", ProductViewSet, basename="products")
-router.register(r"api/product_categories", ProductCategoryViewSet, basename="product_categories")
+router.register(
+    r"api/product_categories", ProductCategoryViewSet, basename="product_categories"
+)
+router.register(r"api/user_likes", UserLikeViewSet, basename="user_likes")
+router.register(r"api/reports", AllProductReportViewSet, basename="all_product_reports")
 
+product_router = nested_routers.NestedSimpleRouter(
+    router, r"api/products", lookup="product"
+)
+product_router.register(r"reports", ProductReportViewSet, basename="product-reports")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -57,14 +68,11 @@ urlpatterns = [
     ),
     path(
         "api/chats/",
-        include('messaging.urls'),
+        include("messaging.urls"),
         name="chats",
     ),
-    path(
-        "api/users/",
-        include('users.urls'),
-        name="users"
-    )
+    path("api/users/", include("users.urls"), name="users"),
 ]
 
 urlpatterns += router.urls
+urlpatterns += product_router.urls
